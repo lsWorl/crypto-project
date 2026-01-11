@@ -1,0 +1,10 @@
+/build
+*.o
+*.obj
+*.exe
+*.txt
+*.aes
+AES/*.o
+AES/*.obj
+AES/*.exe
+AES/*.txt
