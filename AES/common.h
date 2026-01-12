@@ -13,6 +13,10 @@ typedef unsigned char byte; //定义byte类型
 #define STATE_SIZE 16  //状态矩阵大小
 #define BLOCK_SIZE 16  //块大小
 
+#define ETM_IV_SIZE 16 // IV大小
+#define ETM_HMAC_SIZE 32 // HMAC大小
+#define ETM_OVERHEAD (ETM_IV_SIZE + ETM_HMAC_SIZE) // IV和HMAC总大小
+
 // 外部变量声明
 extern byte state[4][4];  //状态矩阵
 
@@ -39,4 +43,9 @@ byte mul_by_0e(byte x);
 void pkcs7_pad(byte *input, int input_len, byte *output, int *output_len);
 int pkcs7_unpad(byte *input, int input_len, byte *output);
 void generate_random_iv(byte iv[16]);
+
+// 常量时间比较函数，用于HMAC验证
+int ct_equal(const byte *a, const byte *b, size_t len);
+
+
 #endif // COMMON_H

@@ -124,6 +124,51 @@ void decrypt_cbc(byte key[16], byte iv[16], byte *input, byte *output, int lengt
     }
 }
 
+// EtM模式解密  输入IV||Ciphertext||TAG
+int decrypt_etm(byte Ciperkey[16],byte Mackey[32], byte *input, size_t input_len, byte *output) {
+    if (input_len < ETM_OVERHEAD) return -1; // 输入长度必须至少包含IV和HMAC
+    if(Ciperkey == NULL || Mackey == NULL || input == NULL || output == NULL) return -1;
+
+    // 提取IV
+    byte iv[ETM_IV_SIZE];
+    memcpy(iv, input, ETM_IV_SIZE);
+
+    // 提取HMAC
+    byte received_hmac[ETM_HMAC_SIZE];
+    memcpy(received_hmac, input + input_len - ETM_HMAC_SIZE, ETM_HMAC_SIZE);
+
+    // 计算HMAC以验证完整性
+    byte computed_hmac[ETM_HMAC_SIZE];
+    hmac_sha256(Mackey, 32, input, input_len - ETM_HMAC_SIZE, computed_hmac);
+
+    // 常量时间比较HMAC以防止时序攻击
+    if (!ct_equal(received_hmac, computed_hmac, ETM_HMAC_SIZE)) {
+        printf("HMAC verification failed!\n");
+        return -1; // HMAC验证失败
+    }
+
+    // 解密数据
+    size_t ciphertext_len = input_len - ETM_OVERHEAD;
+    byte *ciphertext = input + ETM_IV_SIZE;
+    byte *decrypted_padded = (byte *)malloc(ciphertext_len);
+    if(decrypted_padded == NULL) {
+        printf("Memory allocation failed\n");
+        return -1;
+    }
+    decrypt_cbc(Ciperkey, iv, ciphertext, decrypted_padded, ciphertext_len);
+
+    // 移除填充
+    int unpadded_len = pkcs7_unpad(decrypted_padded, ciphertext_len, output);
+    free(decrypted_padded);
+    if (unpadded_len < 0) {
+        printf("Invalid padding!\n");
+        return -1;
+    }
+
+    return unpadded_len; // 返回解密后数据的长度
+}
+
+
 //对文件进行AES解密
 void decrypt_file(const char *input_filename, const char *output_filename, byte key[16])
 {

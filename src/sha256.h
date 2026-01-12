@@ -16,5 +16,5 @@ extern const uint32_t sha256_round_constants[64];
 
 // 函数声明
 void sha256(const byte *input, size_t input_len, byte *digest);
-
+void sha256_print(const byte *digest);
 #endif

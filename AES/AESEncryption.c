@@ -108,6 +108,47 @@ void encrypt_cbc(byte key[16], byte iv[16], byte *input, byte *output, int lengt
     }
 }
 
+//EtM模式加密   输出IV||Ciphertext||TAG
+int encrypt_etm(byte Ciperkey[16],byte Mackey[32], byte *input, size_t input_len, byte *output) {
+    if (input_len < 0) return -1;
+    if(Ciperkey == NULL || Mackey == NULL || input == NULL || output == NULL) return -1;
+
+    // 生成随机IV
+    byte iv[ETM_IV_SIZE];
+    generate_random_iv(iv);
+    memcpy(output, iv, ETM_IV_SIZE); // 将IV写入输出
+
+    // PKCS#7填充
+    int padded_len;
+    byte *padded_input = (byte *)malloc(input_len + BLOCK_SIZE);
+    if(padded_input == NULL) {
+        printf("Memory allocation failed\n");
+        return -1;
+    }
+    pkcs7_pad(input, input_len, padded_input, &padded_len);
+
+    // 加密数据
+    byte *encrypted_data = (byte *)malloc(padded_len);
+    if(encrypted_data == NULL) {
+        printf("Memory allocation failed\n");
+        free(padded_input);
+        return -1;
+    }
+    encrypt_cbc(Ciperkey, iv, padded_input, encrypted_data, padded_len);
+    memcpy(output + ETM_IV_SIZE, encrypted_data, padded_len);
+
+    // 计算HMAC
+    byte hmac[ETM_HMAC_SIZE];
+    hmac_sha256(Mackey, 32, output, ETM_IV_SIZE + padded_len, hmac);
+    memcpy(output + ETM_IV_SIZE + padded_len, hmac, ETM_HMAC_SIZE);
+
+    // 清理
+    free(padded_input);
+    free(encrypted_data);
+
+    return ETM_OVERHEAD + padded_len; // 返回总输出长度
+}
+
 
 // 对文件进行加密
 void encrypt_file(const char *input_filename, const char *output_filename, byte key[16]) {

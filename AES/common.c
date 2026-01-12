@@ -199,3 +199,12 @@ void generate_random_iv(byte iv[16])
     }
 }
 
+
+// 常量时间比较函数，防止时序攻击
+int ct_equal(const byte *a, const byte *b, size_t len) {
+    byte diff = 0;
+    for (size_t i = 0; i < len; i++) {
+        diff |= a[i] ^ b[i];
+    }
+    return diff == 0;
+}

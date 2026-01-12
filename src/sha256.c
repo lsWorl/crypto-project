@@ -16,7 +16,7 @@
 #define SIG0(x) (ROTRIGHT(x, 7) ^ ROTRIGHT(x, 18) ^ ((x) >> 3))
 #define SIG1(x) (ROTRIGHT(x, 17) ^ ROTRIGHT(x, 19) ^ ((x) >> 10))
 
-const uint32_t sha256_initial_hash[8] = { // 每个值取自前八个素数的立方根小数部分的前32位
+const uint32_t sha256_initial_hash[8] = { // 每个值取自前八个素数的平方根小数部分的前32位
     0x6a09e667,
     0xbb67ae85,
     0x3c6ef372,
@@ -129,4 +129,22 @@ void sha256(const byte *input, size_t input_len, byte *digest)
         sha256_compress(padded_msg + offset, hash);
     }
 
+    free(padded_msg);
+    // 将最终哈希值转换为字节流（大端格式）
+    for (int i = 0; i < 8; i++)
+    {
+        digest[i * 4]     = (byte)((hash[i] >> 24) & 0xFF);
+        digest[i * 4 + 1] = (byte)((hash[i] >> 16) & 0xFF);
+        digest[i * 4 + 2] = (byte)((hash[i] >> 8) & 0xFF);
+        digest[i * 4 + 3] = (byte)(hash[i] & 0xFF);
+    }
+}
+
+void sha256_print(const byte *digest)
+{
+    for (int i = 0; i < SHA256_HASH_SIZE; i++)
+    {
+        printf("%02x", digest[i]);
+    }
+    printf("\n");
 }

@@ -21,6 +21,10 @@ Encrypt-and-MAC可能会泄露明文部分信息
 碰撞抗性：不同的输入不应该产生相同的哈希值。
 定长输出：无论输入多长，输出始终是 256 位。
 
+**测试采用恒定时间比较，避免定时攻击**
+
+**采用密钥分离，HMAC与加密采用不同密钥**
+
 Crypto skeleton
 
 This folder contains the skeleton for AES-CBC + HMAC-SHA256 Encrypt-then-MAC (EtM).
