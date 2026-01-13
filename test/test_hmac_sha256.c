@@ -75,7 +75,7 @@ static void debug_hmac_case(const byte *key, size_t key_len,
     printf("final_hmac: "); print_hex(final, HMAC_HASH_SIZE);
 }
 
-int main(int argc, char **argv) {
+int main() {
     int failures = 0;
 
     // 测试向量来自RFC 4231

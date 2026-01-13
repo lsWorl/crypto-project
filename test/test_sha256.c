@@ -24,7 +24,7 @@ static int test_vector(const byte *msg, size_t msg_len, const char *expected_hex
     }
 }
 
-int main(int argc, char **argv) {
+int main() {
     int failures = 0;
 
     failures += test_vector((const byte*)"", 0, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");

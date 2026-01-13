@@ -225,3 +225,53 @@ void decrypt_file(const char *input_filename, const char *output_filename, byte 
     fclose(fin);
     fclose(fout);
 }
+
+int decrypt_file_etm(const char *input_filename, const char *output_filename, byte Ciperkey[16], byte Mackey[32]) {
+    FILE *input_file = fopen(input_filename, "rb");
+    FILE *output_file = fopen(output_filename, "wb");
+    if (!input_file || !output_file) {
+        printf("Error opening files.\n");
+        return -1;
+    }
+
+    // 获取文件大小
+    fseek(input_file, 0, SEEK_END);
+    long input_length = ftell(input_file);
+    fseek(input_file, 0, SEEK_SET);
+
+    if (input_length < ETM_OVERHEAD) {
+        printf("Input file too small to contain ETM overhead.\n");
+        fclose(input_file);
+        fclose(output_file);
+        return -1;
+    }
+
+    // 读取整个文件内容
+    byte *input_data = (byte *)malloc(input_length);
+    fread(input_data, 1, input_length, input_file);
+
+    // 解密数据缓冲区
+    byte *decrypted_data = (byte *)malloc(input_length); // 最大可能长度
+
+    // 执行EtM解密
+    int decrypted_length = decrypt_etm(Ciperkey, Mackey, input_data, input_length, decrypted_data);
+    if (decrypted_length < 0) {
+        printf("Decryption failed.\n");
+        free(input_data);
+        free(decrypted_data);
+        fclose(input_file);
+        fclose(output_file);
+        return -1;
+    }
+
+    // 写入解密后的数据
+    fwrite(decrypted_data, 1, decrypted_length, output_file);
+
+    // 清理资源
+    free(input_data);
+    free(decrypted_data);
+    fclose(input_file);
+    fclose(output_file);
+
+    return decrypted_length; // 返回解密后数据的长度
+}

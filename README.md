@@ -1,7 +1,9 @@
+编译环境为MINGW64 x86_64-15.2.0-release-win32-seh-msvcrt-rt_v13-rev0
+
 运行该程序命令：gcc -g main.c common.c AESEncryption.c -o main.exe 2>&1  （采用GCC编译器，会产生main.exe文件）
 然后再运行：main.exe
 
-对应论文地址为https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
+AES对应论文地址为https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
 状态向量采用Appendix B中的测试向量
 代码中encrypt和decrypt为论文复现
 ## 任意字长的明文加密说明
@@ -25,13 +27,9 @@ Encrypt-and-MAC可能会泄露明文部分信息
 
 **采用密钥分离，HMAC与加密采用不同密钥**
 
-Crypto skeleton
 
-This folder contains the skeleton for AES-CBC + HMAC-SHA256 Encrypt-then-MAC (EtM).
+项目架构 AES-CBC + HMAC-SHA256 Encrypt-then-MAC (EtM).
 
-Layout:
-- include/crypto: public headers
-- src: implementation stubs
-- test: simple test scaffolding
-- CMakeLists.txt: minimal CMake configuration
+具体实现模块：
 
+PKCS#7填充， AES-CBC加密解密算法 HMAC-SHA256实现 以EtM模式加密解密， 防止时序攻击，解密使用ct_equal常量时间比较

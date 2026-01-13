@@ -1,10 +1,10 @@
 CC=gcc
-CFLAGS=-Iinclude -Wall -Wextra -g
+CFLAGS=-I. -Iinclude -IAES -Isrc -Wall -Wextra -g
 SRCS=$(wildcard src/*.c)
 OBJS=$(SRCS:.c=.o)
 LIB=libcrypto.a
 
-.PHONY: all clean test
+.PHONY: all clean test run-tests
 
 all: $(LIB)
 
@@ -15,10 +15,18 @@ src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 test: $(LIB)
-	$(CC) $(CFLAGS) -o test_etm test/test_etm.c $(LIB) -lbcrypt
-	$(CC) $(CFLAGS) -o test_rng test/test_rng.c $(LIB) -lbcrypt
+	$(CC) $(CFLAGS) -o test_hmac test/test_hmac_sha256.c $(LIB)
+	$(CC) $(CFLAGS) -o test_etm test/test_etm.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) -lbcrypt
+	$(CC) $(CFLAGS) -o test_etm_file test/test_etm_file.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) -lbcrypt
 	$(CC) $(CFLAGS) -o aes_demo AES/AESEncryption.c AES/AESDecryption.c AES/common.c AES/main.c $(LIB) -lbcrypt
-	@echo "Built test_etm, test_rng and aes_demo"
+	@echo "Built test_hmac, test_etm, test_etm_file and aes_demo"
+
+run-tests: test
+	@echo "Running tests..."
+	@test_hmac.exe || (echo "test_hmac failed" & exit 1)
+	@test_etm.exe || (echo "test_etm failed" & exit 1)
+	@test_etm_file.exe || (echo "test_etm_file failed" & exit 1)
+	@echo "All tests executed"
 
 clean:
-	rm -f src/*.o $(LIB) test_etm test_rng
+	rm -f src/*.o $(LIB) test_etm test_rng test_hmac test_etm_file aes_demo

@@ -7,7 +7,7 @@
 #define CH(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
 
 // 多路选择函数 对应FIPS180-4的4.1.2
-#define MAJ(x, y, z) ((x) & (y) ^ (x & z) ^ (y & z))
+#define MAJ(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 
 // 大写希格玛函数 对应FIPS180-4的4.1.2 用于工作变量
 #define EP0(x) (ROTRIGHT(x, 2) ^ ROTRIGHT(x, 13) ^ ROTRIGHT(x, 22))

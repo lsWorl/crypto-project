@@ -110,8 +110,8 @@ void encrypt_cbc(byte key[16], byte iv[16], byte *input, byte *output, int lengt
 
 //EtM模式加密   输出IV||Ciphertext||TAG
 int encrypt_etm(byte Ciperkey[16],byte Mackey[32], byte *input, size_t input_len, byte *output) {
-    if (input_len < 0) return -1;
-    if(Ciperkey == NULL || Mackey == NULL || input == NULL || output == NULL) return -1;
+    /* input_len is size_t (unsigned) — no need to check < 0 */
+    if (Ciperkey == NULL || Mackey == NULL || input == NULL || output == NULL) return -1;
 
     // 生成随机IV
     byte iv[ETM_IV_SIZE];
@@ -189,4 +189,43 @@ void encrypt_file(const char *input_filename, const char *output_filename, byte 
     free(encrypted_data);
     fclose(input_file);
     fclose(output_file);
+}
+
+int encrypt_file_etm(const char *input_filename, const char *output_filename, byte Ciperkey[16], byte Mackey[32]) {
+    FILE *input_file = fopen(input_filename, "rb");
+    FILE *output_file = fopen(output_filename, "wb");
+    if (!input_file || !output_file) {
+        printf("Error opening files.\n");
+        return -1;
+    }
+
+    // 读取输入文件内容
+    fseek(input_file, 0, SEEK_END);
+    long input_length = ftell(input_file);  // 通过文件指针获取文件长度
+    fseek(input_file, 0, SEEK_SET);  // 回到文件开头
+    byte *input_data = (byte *)malloc(input_length);
+    fread(input_data, 1, input_length, input_file);
+
+    // 进行EtM加密
+    size_t out_cap = input_length + BLOCK_SIZE + ETM_OVERHEAD + 16; // 加16字节是为了安全裕度
+    byte *output_data = (byte *)malloc(out_cap);
+    int out_len = encrypt_etm(Ciperkey, Mackey, input_data, input_length, output_data);
+    if (out_len < 0) {
+        printf("EtM encryption failed.\n");
+        free(input_data);
+        free(output_data);
+        fclose(input_file);
+        fclose(output_file);
+        return -1;
+    }
+
+    // 写入加密数据到输出文件
+    fwrite(output_data, 1, out_len, output_file);
+
+    // 清理
+    free(input_data);
+    free(output_data);
+    fclose(input_file);
+    fclose(output_file);
+    return 0;
 }
