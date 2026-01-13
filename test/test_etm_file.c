@@ -26,9 +26,9 @@ int main(void) {
     byte mac_key[32] = {0};
     for (int i = 0; i < 32; i++) mac_key[i] = (byte)i;
 
-    const char *plain = "AES/sample_plain.txt";
-    const char *enc = "AES/tmp_etm_encrypted.aes";
-    const char *dec = "AES/tmp_etm_decrypted.txt";
+    const char *plain = "sample_plain.txt";
+    const char *enc = "tmp_etm_encrypted.aes";
+    const char *dec = "tmp_etm_decrypted.txt";
 
     if (encrypt_file_etm(plain, enc, ciph_key, mac_key) != 0) {
         printf("encrypt_file_etm failed\n");

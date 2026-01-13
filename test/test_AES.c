@@ -1,25 +1,16 @@
 #include "common.h"
 #include "AESEncryption.h"
 #include "AESDecryption.h"
+#include "vectors.h"
+#include <string.h>
 int main(void) {
     // 对应论文地址为https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
     // 状态向量采用Appendix B中的测试向量
-    byte input[STATE_SIZE] = {
-        0x32, 0x43, 0xf6, 0xa8,
-        0x88, 0x5a, 0x30, 0x8d,
-        0x31, 0x31, 0x98, 0xa2,
-        0xe0, 0x37, 0x07, 0x34
-    };
-    
-    byte key[STATE_SIZE] = {
-        0x2b, 0x7e, 0x15, 0x16,
-        0x28, 0xae, 0xd2, 0xa6,
-        0xab, 0xf7, 0x15, 0x88,
-        0x09, 0xcf, 0x4f, 0x3c
-    };
-    
+    byte input[STATE_SIZE];
+    byte key[STATE_SIZE];
     byte output[STATE_SIZE];
-    
+    memcpy(input, AES128_PLAINTEXT, STATE_SIZE);
+    memcpy(key, AES128_KEY, STATE_SIZE);
     encrypt(key, input, output);
     
     printf("Encrypted output:\n");
@@ -27,13 +18,23 @@ int main(void) {
         printf("%02x ", output[i]);
     }
     printf("\n");
-    
+    if(memcmp(output, AES128_CIPHERTEXT, STATE_SIZE) == 0) {
+        printf("PASS: AES-128 test vector\n");
+    } else {
+        printf("FAIL: AES-128 test vector\n");
+    }
     decrypt(key, output, input);
     printf("Decrypted output:\n");
     for(int i = 0; i < STATE_SIZE; i++) {
         printf("%02x ", input[i]);
     }
     printf("\n");
+
+    if(memcmp(input, AES128_PLAINTEXT, STATE_SIZE) == 0) {
+        printf("PASS: AES-128 decryption test vector\n");
+    } else {
+        printf("FAIL: AES-128 decryption test vector\n");
+    }
 
     // ---------- 文件加密演示 ----------
     const char *plaintext = "sample_plain.txt";

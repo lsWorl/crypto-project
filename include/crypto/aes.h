@@ -3,12 +3,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
-
+#include "crypto_types.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef unsigned char byte;
 
 // Block-level AES functions (128-bit key assumed in current project)
 void encrypt(byte key[16], byte input[16], byte output[16]);

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "sha256.h"
+#include "crypto/sha256.h"
 
 static void to_hex(const byte *digest, char *out) {
     for (int i = 0; i < SHA256_HASH_SIZE; i++) {

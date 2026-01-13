@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I. -Iinclude -IAES -Isrc -Wall -Wextra -g
+CFLAGS=-I. -Iinclude -IAES -Isrc -Itest -Wall -Wextra -g
 SRCS=$(wildcard src/*.c)
 OBJS=$(SRCS:.c=.o)
 LIB=libcrypto.a
@@ -18,8 +18,8 @@ test: $(LIB)
 	$(CC) $(CFLAGS) -o test_hmac test/test_hmac_sha256.c $(LIB)
 	$(CC) $(CFLAGS) -o test_etm test/test_etm.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) -lbcrypt
 	$(CC) $(CFLAGS) -o test_etm_file test/test_etm_file.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) -lbcrypt
-	$(CC) $(CFLAGS) -o aes_demo AES/AESEncryption.c AES/AESDecryption.c AES/common.c AES/main.c $(LIB) -lbcrypt
-	@echo "Built test_hmac, test_etm, test_etm_file and aes_demo"
+	$(CC) $(CFLAGS) -o test_AES test/test_AES.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) -lbcrypt
+	@echo "Built test_hmac, test_etm, test_etm_file and test_AES"
 
 run-tests: test
 	@echo "Running tests..."

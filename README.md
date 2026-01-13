@@ -1,7 +1,6 @@
 编译环境为MINGW64 x86_64-15.2.0-release-win32-seh-msvcrt-rt_v13-rev0
 
-运行该程序命令：gcc -g main.c common.c AESEncryption.c -o main.exe 2>&1  （采用GCC编译器，会产生main.exe文件）
-然后再运行：main.exe
+使用make run-tests测试所有功能，使用make test会生成可执行文件，可以对各模块逐一进行测试
 
 AES对应论文地址为https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
 状态向量采用Appendix B中的测试向量

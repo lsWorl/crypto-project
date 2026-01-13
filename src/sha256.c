@@ -1,4 +1,4 @@
-#include "sha256.h"
+#include "crypto/sha256.h"
 
 // 循环右移n位  对应FIPS180-4的3.2.4
 #define ROTRIGHT(word, bits) (((word) >> (bits)) | ((word) << (32 - (bits))))

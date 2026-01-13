@@ -1,9 +1,12 @@
-#ifndef SHA256_H
-#define SHA256_H
-#include "common.h"
+#ifndef CRYPTO_SHA256_H
+#define CRYPTO_SHA256_H
+
+#include "crypto_types.h"
 #include <stdint.h>
 #include <stddef.h>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define SHA256_BLOCK_SIZE 64 // 每次处理 512 bit = 64 字节
 #define SHA256_HASH_SIZE 32  // 输出 256 bit = 32 字节
@@ -17,4 +20,5 @@ extern const uint32_t sha256_round_constants[64];
 // 函数声明
 void sha256(const byte *input, size_t input_len, byte *digest);
 void sha256_print(const byte *digest);
-#endif
+
+#endif // CRYPTO_SHA256_H

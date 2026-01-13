@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-typedef unsigned char byte; //定义byte类型
+#include "crypto/crypto_types.h"
 
 #define Nb 4           //列数
 #define Nk 4           //密钥长度,以32位字为单位,故当前密钥长度为128位
