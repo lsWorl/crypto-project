@@ -32,3 +32,6 @@ Encrypt-and-MAC可能会泄露明文部分信息
 具体实现模块：
 
 PKCS#7填充， AES-CBC加密解密算法 HMAC-SHA256实现 以EtM模式加密解密， 防止时序攻击，解密使用ct_equal常量时间比较
+
+PBKDF2-HMAC-SHA256 仅用于将低熵用户口令转换为高熵主密钥
+所有用途密钥（加密、认证、nonce）均由后续 HKDF 派生，以保证 key separation 和系统可扩展性。

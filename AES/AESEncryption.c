@@ -1,5 +1,5 @@
 #include "AESEncryption.h"
-
+#include "crypto/rng.h"
 // 字节替代操作
 void SubBytes(void)
 {
@@ -115,7 +115,7 @@ int encrypt_etm(byte Ciperkey[16],byte Mackey[32], byte *input, size_t input_len
 
     // 生成随机IV
     byte iv[ETM_IV_SIZE];
-    generate_random_iv(iv);
+    crypto_random_bytes(iv, ETM_IV_SIZE);
     memcpy(output, iv, ETM_IV_SIZE); // 将IV写入输出
 
     // PKCS#7填充

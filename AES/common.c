@@ -1,4 +1,5 @@
 #include "common.h"
+#include "crypto/rng.h"
 
 // 轮常量
 const byte Rcon[11] = {
@@ -190,15 +191,17 @@ int pkcs7_unpad(byte *input, int input_len, byte *output)
     return input_len - pad_len;
 }
 
-// 生成随机IV向量
-void generate_random_iv(byte iv[16])
-{
-    for (int i = 0; i < 16; i++)
-    {
-        iv[i] = (byte)(rand() % 256); // 生成0-255之间的随机字节
+
+
+// 生成随机IV，用于加密
+void generate_random_iv(byte iv[16]) {
+    if (crypto_random_bytes(iv, ETM_IV_SIZE) != 0) {
+        // 如果系统 RNG 失败，回退到 rand()
+        for (int i = 0; i < ETM_IV_SIZE; i++) {
+            iv[i] = (byte)(rand() & 0xff);
+        }
     }
 }
-
 
 // 常量时间比较函数，防止时序攻击
 int ct_equal(const byte *a, const byte *b, size_t len) {
