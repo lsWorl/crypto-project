@@ -8,8 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SHA256_BLOCK_SIZE 64 // 每次处理 512 bit = 64 字节
-#define SHA256_HASH_SIZE 32  // 输出 256 bit = 32 字节
+
 
 // 初始哈希值（素数 2,3,5,7,11,13,17,19 的平方根小数部分的前 32 位）
 extern const uint32_t sha256_initial_hash[8];

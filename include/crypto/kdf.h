@@ -3,15 +3,7 @@
 
 #include "crypto_types.h"
 
-#define PBKDF2_SALT_SIZE 16
-#define PBKDF2_ITERATIONS 100000  //先固定迭代次数为100000次
 
-#define MASTER_KEY_SIZE 32
-#define AES_KEY_SIZE 16
-#define HMAC_KEY_SIZE 32
-#define NOUNCE_SEED_SIZE 32
-
-#define HKDF_HASH_SIZE 32 // SHA-256 输出大小
 
 // byte k_etm_encrypt[16];     // AES-ETM 加密密钥
 // byte k_etm_hmac[32];        // AES-ETM HMAC密钥

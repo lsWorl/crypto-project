@@ -7,15 +7,7 @@
 #include <stdlib.h>
 #include "crypto/crypto_types.h"
 
-#define Nb 4           //列数
-#define Nk 4           //密钥长度,以32位字为单位,故当前密钥长度为128位
-#define Nr 10          //轮数
-#define STATE_SIZE 16  //状态矩阵大小
-#define BLOCK_SIZE 16  //块大小
 
-#define ETM_IV_SIZE 16 // IV大小
-#define ETM_HMAC_SIZE 32 // HMAC大小
-#define ETM_OVERHEAD (ETM_IV_SIZE + ETM_HMAC_SIZE) // IV和HMAC总大小
 
 // 外部变量声明
 extern byte state[4][4];  //状态矩阵

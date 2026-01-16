@@ -21,7 +21,7 @@ static int run_roundtrip(const byte *ciperkey, const byte *mackey, const byte *m
         return 1;
     }
 
-    int out_len = encrypt_etm((byte *)ciperkey, (byte *)mackey, (byte *)msg, msg_len, out);
+    int out_len = encrypt_etm((byte *)ciperkey, (byte *)mackey,NULL, (byte *)msg, msg_len, out);
     if (out_len <= 0)
     {
         printf("encrypt_etm failed\n");
@@ -87,7 +87,7 @@ static int run_tamper_checks(const byte *ciperkey, const byte *mackey, const byt
         return 1;
     }
 
-    int out_len = encrypt_etm((byte *)ciperkey, (byte *)mackey, (byte *)msg, msg_len, out);
+    int out_len = encrypt_etm((byte *)ciperkey, (byte *)mackey,NULL, (byte *)msg, msg_len, out);
     if (out_len <= 0)
     {
         printf("encrypt_etm failed\n");
@@ -156,7 +156,7 @@ int main(void)
 
     size_t out_cap = strlen(msg1) + BLOCK_SIZE + ETM_OVERHEAD + 16;
     byte *out = malloc(out_cap);
-    int out_len = encrypt_etm((byte *)ciph_key, (byte *)mac_key, (byte *)msg1, strlen(msg1), out);
+    int out_len = encrypt_etm((byte *)ciph_key, (byte *)mac_key,NULL, (byte *)msg1, strlen(msg1), out);
     if (out_len > 0)
     {
         byte recomputed[ETM_HMAC_SIZE];

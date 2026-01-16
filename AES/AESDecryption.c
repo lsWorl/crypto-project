@@ -127,7 +127,7 @@ void decrypt_cbc(byte key[16], byte iv[16], byte *input, byte *output, int lengt
 // EtM模式解密  输入IV||Ciphertext||TAG
 int decrypt_etm(byte Ciperkey[16],byte Mackey[32], byte *input, size_t input_len, byte *output) {
     if (input_len < ETM_OVERHEAD) return -1; // 输入长度必须至少包含IV和HMAC
-    if(Ciperkey == NULL || Mackey == NULL || input == NULL || output == NULL) return -1;
+    if(Ciperkey == NULL || Mackey == NULL || input == NULL) return -1;
 
     // 提取IV
     byte iv[ETM_IV_SIZE];
@@ -136,11 +136,12 @@ int decrypt_etm(byte Ciperkey[16],byte Mackey[32], byte *input, size_t input_len
     // 提取HMAC
     byte received_hmac[ETM_HMAC_SIZE];
     memcpy(received_hmac, input + input_len - ETM_HMAC_SIZE, ETM_HMAC_SIZE);
+    
 
     // 计算HMAC以验证完整性
     byte computed_hmac[ETM_HMAC_SIZE];
     hmac_sha256(Mackey, 32, input, input_len - ETM_HMAC_SIZE, computed_hmac);
-
+    
     // 常量时间比较HMAC以防止时序攻击
     if (!ct_equal(received_hmac, computed_hmac, ETM_HMAC_SIZE)) {
         printf("HMAC verification failed!\n");
@@ -159,7 +160,7 @@ int decrypt_etm(byte Ciperkey[16],byte Mackey[32], byte *input, size_t input_len
 
     // 移除填充
     int unpadded_len = pkcs7_unpad(decrypted_padded, ciphertext_len, output);
-    free(decrypted_padded);
+    // free(decrypted_padded);
     if (unpadded_len < 0) {
         printf("Invalid padding!\n");
         return -1;
