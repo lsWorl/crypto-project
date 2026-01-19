@@ -43,4 +43,8 @@ typedef unsigned char byte;
 #define SALT_SIZE 16
 
 
+//ECC 相关常量
+#define X25519_KEY_SIZE 32      //私钥公钥共享密钥均为32B
+#define CURVE25519_P_BYTES 32  //域大小为256bit
+
 #endif // CRYPTO_CRYPTO_TYPES_H

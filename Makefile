@@ -1,6 +1,8 @@
 CC=gcc
 CFLAGS=-I. -Iinclude -IAES -Isrc -Itest -Wall -Wextra -g
+# 链接库：bcrypt用于随机数，libsodium.a用于高级加密算法
 LIBS=-lbcrypt
+SODIUM_LIB=libsodium.a
 SRCS=$(wildcard src/*.c)
 OBJS=$(SRCS:.c=.o)
 LIB=libcrypto.a
@@ -22,7 +24,8 @@ test: $(LIB)
 	$(CC) $(CFLAGS) -o test_AES test/test_AES.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) $(LIBS)
 	$(CC) $(CFLAGS) -o test_kdf test/test_kdf.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) $(LIBS)
 	$(CC) $(CFLAGS) -o test_file_crypto test/test_file_crypto.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) $(LIBS)
-	@echo "Built test_hmac, test_etm, test_etm_file, test_AES, test_kdf, test_file_crypto"
+	$(CC) $(CFLAGS) -o test_x25519 test/test_x25519.c $(LIB) $(SODIUM_LIB) $(LIBS)
+	@echo "Built test_hmac, test_etm, test_etm_file, test_AES, test_kdf, test_file_crypto, test_x25519"
 
 run-tests: test
 	@echo "Running tests..."
@@ -33,4 +36,4 @@ run-tests: test
 	@echo "All tests executed"
 
 clean:
-	rm -f src/*.o $(LIB) test_etm test_rng test_hmac test_etm_file test_file_crypto aes_demo
+	del /Q src\*.o $(LIB) test_*.exe 2>nul || echo Clean completed
