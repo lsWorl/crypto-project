@@ -47,4 +47,5 @@ typedef unsigned char byte;
 #define X25519_KEY_SIZE 32      //私钥公钥共享密钥均为32B
 #define CURVE25519_P_BYTES 32  //域大小为256bit
 
+typedef int64_t field_elem[16]; // 用于表示25519域元素
 #endif // CRYPTO_CRYPTO_TYPES_H
