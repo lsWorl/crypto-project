@@ -1,7 +1,7 @@
 #include "AESEncryption.h"
 #include "crypto/rng.h"
 // 字节替代操作
-void SubBytes(void)
+static void SubBytes(void)
 {
     int i, j;
     for (i = 0; i < 4; i++)
@@ -14,7 +14,7 @@ void SubBytes(void)
 }
 
 // 行移位操作
-void shift_rows(void)
+static void shift_rows(void)
 {
     byte temp[4][4];
     int i, j;
@@ -37,7 +37,7 @@ void shift_rows(void)
 }
 
 // 列混合
-void MixColumns(void)
+static void MixColumns(void)
 {
     byte temp[4][4];
     int i, j;

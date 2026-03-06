@@ -85,6 +85,7 @@ static void pack25519(byte out[32], const field_elem in) {
     for (int i = 0; i < 16; i++) {
         t[i] = in[i];
     }
+    // 确保值在规范范围内
     carry25519(t);
     carry25519(t);
     carry25519(t);

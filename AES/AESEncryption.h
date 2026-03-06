@@ -8,4 +8,5 @@
 // Keep this file for backwards compatibility and internal includes.
 int encrypt_etm(byte Ciperkey[16],byte Mackey[32], byte iv[16], byte *input, size_t input_len, byte *output);
 int encrypt_file_etm(const char *input_filename, const char *output_filename, byte Ciperkey[16], byte Mackey[32]);
+void encrypt(byte key[16], byte input[16], byte output[16]);
 #endif // AES_ENCRYPTION_H

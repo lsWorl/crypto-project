@@ -11,7 +11,7 @@ int main(void){
     int failures = 0;
     size_t vector_count = sizeof(PBKDF2_SHA256_VECTORS) / sizeof(PBKDF2_SHA256_VECTORS[0]);
     printf("PBKDF2 vector count: %zu\n", vector_count);
-    for (size_t i = 0; i < sizeof(PBKDF2_SHA256_VECTORS) / sizeof(PBKDF2_SHA256_VECTORS[0]); i++)
+    for (size_t i = 0; i < vector_count; i++)
     {
         const struct pbkdf2_test_vector *vec = &PBKDF2_SHA256_VECTORS[i];
         byte derived_key[64]; // 假设最大派生密钥长度为64字节
