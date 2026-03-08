@@ -25,13 +25,15 @@ test: $(LIB)
 	$(CC) $(CFLAGS) -o test_kdf test/test_kdf.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) $(LIBS)
 	$(CC) $(CFLAGS) -o test_file_crypto test/test_file_crypto.c AES/AESEncryption.c AES/AESDecryption.c AES/common.c $(LIB) $(LIBS)
 	$(CC) $(CFLAGS) -o test_x25519 test/test_x25519.c $(LIB) $(SODIUM_LIB) $(LIBS)
-	@echo "Built test_hmac, test_etm, test_etm_file, test_AES, test_kdf, test_file_crypto, test_x25519"
+	$(CC) $(CFLAGS) -o test_gcm test/test_gcm.c AES/AESEncryption.c AES/common.c $(LIB) $(SODIUM_LIB) $(LIBS)
+	@echo "Built test_hmac, test_etm, test_etm_file, test_AES, test_kdf, test_file_crypto, test_x25519 test_gcm"
 
 run-tests: test
 	@echo "Running tests..."
 	@test_hmac.exe || (echo "test_hmac failed" & exit 1)
 	@test_etm.exe || (echo "test_etm failed" & exit 1)
 	@test_etm_file.exe || (echo "test_etm_file failed" & exit 1)
+	@test_gcm.exe || (echo "test_gcm failed" & exit 1)
 	@test_file_crypto.exe
 	@echo "All tests executed"
 
