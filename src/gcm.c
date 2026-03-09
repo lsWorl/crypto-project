@@ -2,7 +2,6 @@
 #include <string.h>
 
 // GHASH乘法实现    参考NIST SP 800-38D 6.3
-// 使用标准的“按位乘法 + 左移”实现（与 NIST 伪代码一致）。
 static void gcm_mult(const byte *X, const byte *Y, byte *Z)
 {
     byte V[16];
@@ -33,14 +32,13 @@ static void gcm_mult(const byte *X, const byte *Y, byte *Z)
 }
 
 // GHASH函数     参考NIST SP 800-38D 6.4
-// Y is an in/out value (initial state), allowing incremental hashing of A||C||len
 static void ghash(const byte *H, const byte *X, size_t len, byte *Y)
 {
     byte Xi[16];
-    // NOTE: Y is treated as the current GHASH state (not re?initialized here).
     for (size_t i = 0; i < len; i += 16) // 对块进行处理
     {
         size_t block_len = (len - i < 16) ? (len - i) : 16;
+        // step 2
         memset(Xi, 0, 16);
         memcpy(Xi, X + i, block_len);
         for (int j = 0; j < 16; j++)
@@ -60,6 +58,29 @@ static void inc_32(byte *counter)
     counter[13] = (n >> 16) & 0xFF;
     counter[14] = (n >> 8) & 0xFF;
     counter[15] = n & 0xFF;
+}
+
+// 计算初始计数器块 J0（NIST SP 800-38D §7.1）
+// 对于 96 位 IV, J0 = IV || 0^31 || 1.
+// 对于其他长度的 IV, J0 = GHASH(H, IV || pad || [len(IV)]), where len(IV) is in bits.
+static void compute_J0(const byte *H, const byte *iv, size_t iv_len, byte *J0)
+{
+    if (iv_len == 12) {
+        memcpy(J0, iv, 12);
+        J0[12] = J0[13] = J0[14] = 0;
+        J0[15] = 1;
+        return;
+    }
+
+    memset(J0, 0, 16);
+    ghash(H, iv, iv_len, J0);
+
+    byte len_block[16] = {0};
+    uint64_t iv_bits = (uint64_t)iv_len * 8;
+    for (int i = 0; i < 8; i++)
+        len_block[i] = (iv_bits >> (56 - i * 8)) & 0xFF;
+
+    ghash(H, len_block, 16, J0);
 }
 
 // gctr函数     参考NIST SP 800-38D 6.5
@@ -91,18 +112,8 @@ int aes_gcm_encrypt(const byte *key, const byte *iv, size_t iv_len,
     byte H[16] = {0}, J0[16] = {0}, S[16] = {0};
     encrypt((byte *)key, H, H); // H = E(K, 0^128)
 
-    // J0 计算（NIST 7.1）  判断长度是否为96bit (为简化起见，先固定传IV向量为96bit) step 2
-    if (iv_len == 12)
-    {
-        memcpy(J0, iv, 12);
-        J0[15] = 1;
-    }
-    else
-    {
-        // 任意长度 IV
-        ghash(H, iv, iv_len, J0);
-        // 后面再补长度编码...
-    }
+    // J0 计算（NIST 7.1）
+    compute_J0(H, iv, iv_len, J0);
 
     // 加密  step 3
     gctr(key, J0, plaintext, pt_len, ciphertext); // C = GCTR(K, J0, P)
@@ -142,12 +153,7 @@ int aes_gcm_decrypt(const byte *key, const byte *iv, size_t iv_len, const byte *
     // step 2
     encrypt((byte *)key, H, H);
     // step 3
-    if (iv_len == 12) {
-        memcpy(J0, iv, 12);
-        J0[15] = 1;
-    } else {
-        return -1;
-    }
+    compute_J0(H, iv, iv_len, J0);
     // step 4
     gctr(key, J0, ciphertext, ct_len, plaintext);
 
